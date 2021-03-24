@@ -3,21 +3,18 @@
 import sys
 
 if len(sys.argv)<2:
-    print("usage: % <9-10digit_number>")
+    print("usage: %s <9_or_10_digit_number>" % sys.argv[0])
     exit(1)
 
-# implement the exact spec. There might not be a "XI" suffix
 def calc_isbn_suffix(n):
     code_sum = 0
     for i, digit in enumerate(n):
         code_sum += int(digit) * (10 - i)
-    parity = 11 - code_sum % 11
+    parity = (11 - code_sum % 11) % 11
     if parity < 10:
         suffix = str(parity)
     elif parity == 10:
         suffix = "X"
-    elif parity == 11:
-        suffix = "XI"
     return suffix
 
 def isbn(n):
@@ -25,17 +22,16 @@ def isbn(n):
         try:
             int(n)
         except:
-            return "error: input is not an integer"
+            return "error: input is not an integer."+"\tDon't use hyphens between digits"
         return n+calc_isbn_suffix(n)
-    elif len(n)==10 or len(n)==11:
-        sf = 2 if n[-1] == "I" else 1
+    elif len(n)==10:
         try:
-            int(n[:len(n)-sf])
+            int(n[:len(n)-1])
         except:
-            return "error: input w/o parity suffix is not an integer"
-        parity = n[-sf]
-        return calc_isbn_suffix(n[:len(n)-sf]) == parity
+            return "error: input w/o parity suffix is not an integer"+"\tDon't use hyphens between digits"
+        parity = n[-1]
+        return calc_isbn_suffix(n[:len(n)-1]) == parity
     else:
-        return "error: input is not 9 or 10"
+        return "error: input is not 9 or 10"+"\tDon't use hyphens between digits"
 
 print(isbn(sys.argv[1]))
